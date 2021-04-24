@@ -11,10 +11,14 @@ from pathlib import Path
 
 import numpy as np
 
+VOCAB_PATH = 'd{}.replte{}.vocab.words.txt' # Found 57672 vectors for 149508 words
+GLOVE_PATH = 'd{}.replte{}.glove.npz'
+DISTANCE = 5
+REPEAT = 1
 
 if __name__ == '__main__':
     # Load vocab
-    with Path('vocab.words.txt').open() as f:
+    with Path(VOCAB_PATH.format(DISTANCE, REPEAT)).open() as f:
         word_to_idx = {line.strip(): idx for idx, line in enumerate(f)}
     size_vocab = len(word_to_idx)
 
@@ -24,7 +28,7 @@ if __name__ == '__main__':
     # Get relevant glove vectors
     found = 0
     print('Reading GloVe file (may take a while)')
-    with Path('glove.840B.300d.txt').open() as f:
+    with Path('glove.840B.300d.txt').open(encoding='utf8') as f:
         for line_idx, line in enumerate(f):
             if line_idx % 100000 == 0:
                 print('- At line {}'.format(line_idx))
@@ -40,4 +44,4 @@ if __name__ == '__main__':
     print('- done. Found {} vectors for {} words'.format(found, size_vocab))
 
     # Save np.array to file
-    np.savez_compressed('glove.npz', embeddings=embeddings)
+    np.savez_compressed(GLOVE_PATH.format(DISTANCE, REPEAT), embeddings=embeddings)
